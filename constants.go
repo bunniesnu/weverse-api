@@ -1,0 +1,27 @@
+package weverse
+
+var AccountDefaultHeaders = map[string]string{
+	"Host": "accountapi.weverse.io",
+	"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0",
+	"Accept": "*/*",
+	"Accept-Language": "en-US,en;q=0.7,ko-KR;q=0.3",
+	"Accept-Encoding": "gzip, deflate, br, zstd",
+	"Referer": "https://account.weverse.io/",
+	"x-acc-app-secret": "5419526f1c624b38b10787e5c10b2a7a",
+	"x-acc-app-version": "3.0.0",
+	"x-acc-language": "en",
+	"x-acc-service-id": "weverse",
+	"x-acc-trace-id": "1",
+	"x-clog-user-device-id": "1",
+	"Origin": "https://account.weverse.io",
+	"DNT": "1",
+	"Sec-GPC": "1",
+	"Connection": "keep-alive",
+	"Sec-Fetch-Dest": "empty",
+	"Sec-Fetch-Mode": "cors",
+	"Sec-Fetch-Site": "same-site",
+	"Priority": "u=0",
+	"Pragma": "no-cache",
+	"Cache-Control": "no-cache",
+	"TE": "trailers",
+}
