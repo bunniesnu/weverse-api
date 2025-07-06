@@ -2,6 +2,7 @@ package weverse
 
 import (
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -59,6 +60,9 @@ func generatePassword(length int) string {
 }
 
 func TestWeverse(t *testing.T) {
+	proxyURL := "" // Set your proxy URL if needed, otherwise leave empty
+	timeout := 30 * time.Second
+
 	// Generate a random email using Gmailnator
 	gmail, err := gmailnator.NewGmailnator()
 	if err != nil {
@@ -72,7 +76,7 @@ func TestWeverse(t *testing.T) {
 
 	// Test nickname suggestion
 	password := generatePassword(16)
-	w, err := New(email, password, "", 30*time.Second)
+	w, err := New(email, password, proxyURL, timeout)
 	if err != nil {
 		t.Errorf("error creating Weverse client: %v", err)
 	}
@@ -176,4 +180,25 @@ func TestWeverse(t *testing.T) {
 	} else {
 		t.Log("Account info retrieval success")
 	}
+
+	// Test saving and loading session
+	saveSessionPath := "session.json"
+	err = w.SaveSession(saveSessionPath)
+	if err != nil {
+		t.Errorf("error saving session: %v", err)
+	}
+	err = w.LoadSession(saveSessionPath, proxyURL, timeout)
+	if err != nil {
+		t.Errorf("error loading session: %v", err)
+	}
+	info, err = w.GetAccountInfo()
+	if err != nil {
+		t.Errorf("error getting account info after loading session: %v", err)
+	}
+	if info.Email != email || info.Nickname != nickname {
+		t.Errorf("Expected email %s, got %s", email, info.Email)
+	} else {
+		t.Log("Session save/load success")
+	}
+	os.Remove(saveSessionPath)
 }

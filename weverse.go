@@ -1,38 +1,24 @@
 package weverse
 
 import (
-	"context"
-	"net"
+	"encoding/json"
 	"net/http"
+	"os"
 	"time"
-
-	"golang.org/x/net/proxy"
 )
 
 type Weverse struct {
-	Client *http.Client
-	Email string
-	Password string
-	Nickname string
-	AccessToken string
+	Client      *http.Client `json:"-"`
+	Email       string       `json:"email"`
+	Password    string       `json:"password"`
+	Nickname    string       `json:"nickname"`
+	AccessToken string       `json:"access_token"`
 }
 
 func New(email, password, proxyURL string, timeout time.Duration) (*Weverse, error) {
-	client := &http.Client{}
-	if proxyURL != "" {
-		dialer, err := proxy.SOCKS5("tcp", proxyURL, nil, proxy.Direct)
-		if err != nil {
-			return nil, err
-		}
-		transport := &http.Transport{
-			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
-				return dialer.Dial(network, addr)
-			},
-		}
-		client = &http.Client{
-			Transport: transport,
-			Timeout:   timeout,
-		}
+	client, err := MakeProxyClient(proxyURL, timeout)
+	if err != nil {
+		return nil, err
 	}
 	return &Weverse{
 		Client: client,
@@ -41,4 +27,53 @@ func New(email, password, proxyURL string, timeout time.Duration) (*Weverse, err
 		Nickname: "",
 		AccessToken: "",
 	}, nil
+}
+
+func (w *Weverse) SaveSession(destPath string) error {
+	file, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	session := struct {
+		Email       string `json:"email"`
+		Password    string `json:"password"`
+		Nickname    string `json:"nickname"`
+		AccessToken string `json:"access_token"`
+	}{
+		Email:       w.Email,
+		Password:    w.Password,
+		Nickname:    w.Nickname,
+		AccessToken: w.AccessToken,
+	}
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(session)
+}
+
+func (w *Weverse) LoadSession(srcPath, proxyURL string, timeout time.Duration) error {
+	file, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	session := struct {
+		Email       string `json:"email"`
+		Password    string `json:"password"`
+		Nickname    string `json:"nickname"`
+		AccessToken string `json:"access_token"`
+	}{}
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&session); err != nil {
+		return err
+	}
+	w.Client, err = MakeProxyClient(proxyURL, timeout)
+	if err != nil {
+		return err
+	}
+	w.Email = session.Email
+	w.Password = session.Password
+	w.Nickname = session.Nickname
+	w.AccessToken = session.AccessToken
+	return nil
 }
