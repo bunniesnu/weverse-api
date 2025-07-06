@@ -165,4 +165,15 @@ func TestWeverse(t *testing.T) {
 	} else {
 		t.Log("Login success")
 	}
+
+	// Test account info retrieval
+	info, err := w.GetAccountInfo()
+	if err != nil {
+		t.Errorf("error getting account info: %v", err)
+	}
+	if info.Email != email || info.Nickname != nickname {
+		t.Errorf("Expected email %s, got %s", email, info.Email)
+	} else {
+		t.Log("Account info retrieval success")
+	}
 }

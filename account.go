@@ -231,3 +231,27 @@ func (w *Weverse) Login() error {
 	w.AccessToken = result.AccessToken
 	return nil
 }
+
+func (w *Weverse) GetAccountInfo() (*AccountInfo, error) {
+	req, err := http.NewRequest(http.MethodGet, "https://sdk.weverse.io/api/v2/auth/token", nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create account info request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+w.AccessToken)
+	for key, value := range SDKDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get account info: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get account info: %s", resp.Status)
+	}
+	accountInfo := new(AccountInfo)
+	if err := json.NewDecoder(resp.Body).Decode(accountInfo); err != nil {
+		return nil, fmt.Errorf("failed to decode account info response: %w", err)
+	}
+	return accountInfo, nil
+}
