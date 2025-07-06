@@ -1,7 +1,11 @@
 package weverse
 
 import (
+	"net/url"
+	"regexp"
+	"strings"
 	"testing"
+	"time"
 
 	"crypto/rand"
 	"math/big"
@@ -55,6 +59,7 @@ func generatePassword(length int) string {
 }
 
 func TestWeverse(t *testing.T) {
+	// Generate a random email using Gmailnator
 	gmail, err := gmailnator.NewGmailnator()
 	if err != nil {
 		t.Errorf("error creating Gmailnator client: %v", err)
@@ -64,6 +69,8 @@ func TestWeverse(t *testing.T) {
 		t.Errorf("error generating email: %v", err)
 	}
 	email := gmail.Email.Email
+
+	// Test nickname suggestion
 	password := generatePassword(16)
 	w := New(email, password)
 	nickname, err := w.GetAccountNicknameSuggestion()
@@ -72,6 +79,8 @@ func TestWeverse(t *testing.T) {
 	}
 	w.Nickname = nickname
 	t.Log("Nickname suggestion success")
+
+	// Test nickname check
 	isValid, err := w.CheckNickname(nickname)
 	if err != nil {
 		t.Errorf("error checking nickname: %v", err)
@@ -81,10 +90,67 @@ func TestWeverse(t *testing.T) {
 	} else {
 		t.Log("Nickname check success")
 	}
+
+	// Test account creation
 	err = w.CreateAccount()
 	if err != nil {
 		t.Errorf("error creating account: %v", err)
 	} else {
 		t.Log("Account creation success")
+	}
+
+	// Test account email verification
+	status, err := w.GetAccountStatus()
+	if err != nil {
+		t.Errorf("error getting account status: %v", err)
+	}
+	if !status.EmailVerified {
+		t.Log("Email not verified. Proceeding to verification.")
+	} else {
+		t.Fatal("Email is already verified.")
+	}
+	found := false
+	for range 12 {
+		time.Sleep(5 * time.Second)
+		mailList, err := gmail.GetMails()
+		if err != nil {
+			t.Errorf("error getting mails: %v", err)
+		}
+		for _, mail := range mailList {
+			mailBody, err := gmail.GetMailBody(mail.Mid)
+			if err != nil {
+				t.Errorf("error getting mail body: %v", err)
+			}
+			re := regexp.MustCompile(`https://account\.weverse\.io/signup[^\s"'<>]+`)
+			matches := re.FindAllString(mailBody, -1)
+			for _, link := range matches {
+				parsed, err := url.QueryUnescape(link)
+				if err != nil {
+					t.Errorf("error unescaping url: %v", err)
+					continue
+				}
+				finalLink := strings.ReplaceAll(parsed, "&amp;", "&")
+				found = true
+				clickLink(finalLink)
+			}
+			if found {
+				break
+			}
+		}
+		if found {
+			break
+		}
+	}
+	if !found {
+		t.Fatal("Verification link not found in emails.")
+	}
+	status, err = w.GetAccountStatus()
+	if err != nil {
+		t.Errorf("error getting account status: %v", err)
+	}
+	if !status.EmailVerified {
+		t.Fatal("Email verification failed.")
+	} else {
+		t.Log("Email verification success")
 	}
 }
