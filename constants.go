@@ -6,6 +6,7 @@ var AccountDefaultHeaders = map[string]string{
 	"Accept": "*/*",
 	"Accept-Language": "en-US,en;q=0.7,ko-KR;q=0.3",
 	"Accept-Encoding": "gzip, deflate, br, zstd",
+	"Content-Type": "application/json",
 	"Referer": "https://account.weverse.io/",
 	"x-acc-app-secret": "5419526f1c624b38b10787e5c10b2a7a",
 	"x-acc-app-version": "3.0.0",
