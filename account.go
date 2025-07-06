@@ -180,3 +180,23 @@ func (w *Weverse) CreateAccount() error {
 	}
 	return nil
 }
+
+func (w *Weverse) SendAccountVerificationEmail() error {
+	sendBody := fmt.Sprintf(`{"email":"%s"}`, w.Email)
+	req, err := http.NewRequest(http.MethodPost, "https://accountapi.weverse.io/web/api/v2/signup/email/verification", io.NopCloser(strings.NewReader(sendBody)))
+	if err != nil {
+		return fmt.Errorf("failed to create verification email request: %w", err)
+	}
+	for key, value := range AccountDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send verification email: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to send verification email: %s", resp.Status)
+	}
+	return nil
+}
