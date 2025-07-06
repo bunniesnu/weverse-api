@@ -6,7 +6,7 @@ type Weverse struct {
 	Client *http.Client
 	Email string
 	Password string
-	Username string
+	Nickname string
 	AccessToken string
 }
 
@@ -15,7 +15,7 @@ func New(email, password string) *Weverse {
 		Client: &http.Client{},
 		Email: email,
 		Password: password,
-		Username: "",
+		Nickname: "",
 		AccessToken: "",
 	}
 }
