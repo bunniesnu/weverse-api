@@ -91,3 +91,92 @@ func (w *Weverse) CheckNickname(nickname string) (bool, error) {
 	}
 	return !result.ContainsBadWords, nil
 }
+
+func (w *Weverse) GetAccountCreationTerms() (*AccountTerms, error) {
+	req, err := http.NewRequest(http.MethodGet, "https://accountapi.weverse.io/web/api/v3/terms/ACCOUNT_CREATION?language=en", nil)
+	if err != nil {
+		return nil, err
+	}
+	for key, value := range AccountDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get account creation terms: %s", resp.Status)
+	}
+	termsResult := new(AccountTerms)
+	if err := json.NewDecoder(resp.Body).Decode(termsResult); err != nil {
+		return nil, fmt.Errorf("failed to decode terms response: %w", err)
+	}
+	return termsResult, nil
+}
+
+func (w *Weverse) GetAccountServiceTerms() (*AccountTerms, error) {
+	req, err := http.NewRequest(http.MethodGet, "https://accountapi.weverse.io/web/api/v3/terms/SERVICE_CONNECTION/weverse/?language=en", nil)
+	if err != nil {
+		return nil, err
+	}
+	for key, value := range AccountDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get account service terms: %s", resp.Status)
+	}
+	termsResult := new(AccountTerms)
+	if err := json.NewDecoder(resp.Body).Decode(termsResult); err != nil {
+		return nil, fmt.Errorf("failed to decode terms response: %w", err)
+	}
+	return termsResult, nil
+}
+
+func (w *Weverse) CreateAccount() error {
+	terms := new(AccountTerms)
+	termsResult, err := w.GetAccountCreationTerms()
+	if err != nil {
+		return fmt.Errorf("failed to get account creation terms: %w", err)
+	}
+	terms.Terms = termsResult.Terms
+	serviceTermsResult, err := w.GetAccountServiceTerms()
+	if err != nil {
+		return fmt.Errorf("failed to get account service terms: %w", err)
+	}
+	terms.Terms = append(terms.Terms, serviceTermsResult.Terms...)
+	termsAgreements := "["
+	for i, term := range terms.Terms {
+		if i > 0 {
+			termsAgreements += ","
+		}
+		if term.Required {
+			termsAgreements += fmt.Sprintf(`{"termsDocumentId":"%s","agreed":true}`, term.TermsDocumentID)
+		} else {
+			termsAgreements += fmt.Sprintf(`{"termsDocumentId":"%s","agreed":false}`, term.TermsDocumentID)
+		}
+	}
+	termsAgreements += "]"
+	sendBody := fmt.Sprintf(`{"email":"%s","password":"%s","nickname":"%s","termsAgreements":%s}`, w.Email, w.Password, w.Nickname, termsAgreements)
+	req, err := http.NewRequest(http.MethodPost, "https://accountapi.weverse.io/web/api/v4/signup/by-credentials", io.NopCloser(strings.NewReader(sendBody)))
+	if err != nil {
+		return fmt.Errorf("failed to create account request: %w", err)
+	}
+	for key, value := range AccountDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to create account: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to create account: %s", resp.Status)
+	}
+	return nil
+}

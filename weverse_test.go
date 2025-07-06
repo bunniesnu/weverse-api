@@ -81,4 +81,10 @@ func TestWeverse(t *testing.T) {
 	} else {
 		t.Log("Nickname check success")
 	}
+	err = w.CreateAccount()
+	if err != nil {
+		t.Errorf("error creating account: %v", err)
+	} else {
+		t.Log("Account creation success")
+	}
 }
