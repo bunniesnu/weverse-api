@@ -200,3 +200,34 @@ func (w *Weverse) SendAccountVerificationEmail() error {
 	}
 	return nil
 }
+
+func (w *Weverse) Login() error {
+	sendBody := fmt.Sprintf(`{"email":"%s","password":"%s"}`, w.Email, w.Password)
+	req, err := http.NewRequest(http.MethodPost, "https://sdk.weverse.io/api/v2/auth/token/by-credentials", io.NopCloser(strings.NewReader(sendBody)))
+	if err != nil {
+		return fmt.Errorf("failed to create login request: %w", err)
+	}
+	for key, value := range SDKDefaultHeaders {
+		req.Header.Set(key, value)
+	}
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to login: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to login: %s", resp.Status)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read login response: %w", err)
+	}
+	var result struct {
+		AccessToken string `json:"accessToken"`
+	}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return fmt.Errorf("failed to decode login response: %w", err)
+	}
+	w.AccessToken = result.AccessToken
+	return nil
+}

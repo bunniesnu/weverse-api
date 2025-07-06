@@ -72,13 +72,17 @@ func TestWeverse(t *testing.T) {
 
 	// Test nickname suggestion
 	password := generatePassword(16)
-	w := New(email, password)
+	w, err := New(email, password, "", 30*time.Second)
+	if err != nil {
+		t.Errorf("error creating Weverse client: %v", err)
+	}
 	nickname, err := w.GetAccountNicknameSuggestion()
 	if err != nil {
 		t.Errorf("error getting nickname suggestion: %v", err)
+	} else {
+		t.Log("Nickname suggestion success")
 	}
 	w.Nickname = nickname
-	t.Log("Nickname suggestion success")
 
 	// Test nickname check
 	isValid, err := w.CheckNickname(nickname)
@@ -152,5 +156,13 @@ func TestWeverse(t *testing.T) {
 		t.Fatal("Email verification failed.")
 	} else {
 		t.Log("Email verification success")
+	}
+	
+	// Test login
+	err = w.Login()
+	if err != nil {
+		t.Errorf("error logging in: %v", err)
+	} else {
+		t.Log("Login success")
 	}
 }

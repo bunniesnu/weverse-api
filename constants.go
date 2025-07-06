@@ -26,3 +26,23 @@ var AccountDefaultHeaders = map[string]string{
 	"Cache-Control": "no-cache",
 	"TE": "trailers",
 }
+
+var SDKDefaultHeaders = map[string]string{
+	"Host": "sdk.weverse.io",
+	"Accept": "*/*",
+	"X-SDK-SERVICE-ID": "weverse",
+	"X-SDK-LANGUAGE": "ko",
+	"X-CLOG-USER-DEVICE-ID": "1",
+	"X-SDK-PLATFORM": "iOS",
+	"Accept-Language": "ko-KR,ko;q=0.9",
+	"Accept-Encoding": "gzip, deflate, br",
+	"Content-Type": "application/json",
+	"X-SDK-VERSION": "3.7.0",
+	"User-Agent": "Weverse/3.6.0.30 CFNetwork/3826.500.131 Darwin/24.5.0",
+	"Connection": "keep-alive",
+	"X-SDK-TRACE-ID": "1",
+	"X-SDK-APP-VERSION": "2.2.1",
+	"Pragma": "no-cache",
+	"Cache-Control": "no-cache",
+	"X-SDK-SERVICE-SECRET": "9d79660be5ca452ab8c93bcaee310bb7",
+}
