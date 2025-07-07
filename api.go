@@ -63,3 +63,36 @@ func (w *Weverse) Home() (*HomeResponse, error) {
 	}
 	return homeResponse, nil
 }
+
+func (w *Weverse) GetDMRecommendations() ([]Community, error) {
+	target_path := "/dm/v1.0/dm/recommend-communities"
+	queryParams := map[string]string{
+		"wpf":"pc",
+	}
+	url, err := generateWeverseURL(target_path, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("error generating HMAC: %v", err)
+	}
+	resp, err := weverseAPICall(w.Client, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error making API call: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+	var reader = resp.Body
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		gzipReader, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error creating gzip reader: %v", err)
+		}
+		defer gzipReader.Close()
+		reader = gzipReader
+	}
+	var recommendations []Community
+	if err := json.NewDecoder(reader).Decode(&recommendations); err != nil {
+		return nil, fmt.Errorf("error decoding response: %v", err)
+	}
+	return recommendations, nil
+}

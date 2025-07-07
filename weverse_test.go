@@ -212,9 +212,17 @@ func TestWeverseAPI(t *testing.T) {
 		t.Errorf("error loading session: %v", err)
 		return
 	}
+
+	// Test Recommendations
 	_, err = w.Home()
 	if err != nil {
 		t.Errorf("error getting home data: %v", err)
 		return
 	}
+	_, err = w.GetDMRecommendations()
+	if err != nil {
+		t.Errorf("error getting DM recommendations: %v", err)
+		return
+	}
+	t.Log("Recommendations API calls success")
 }
