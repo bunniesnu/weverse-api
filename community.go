@@ -15,11 +15,7 @@ func (w *Weverse) SearchCommunity(keyword string) ([]Community, error) {
 		"keyword": keyword,
 		"wpf":     "pc",
 	}
-	url, err := generateWeverseURL(target_path, queryParams)
-	if err != nil {
-		return nil, fmt.Errorf("error generating HMAC: %v", err)
-	}
-	resp, err := weverseAPICall(w.Client, http.MethodGet, url, nil)
+	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error making API call: %v", err)
 	}

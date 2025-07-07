@@ -7,7 +7,11 @@ import (
 	"net/http"
 )
 
-func weverseAPICall(client *http.Client, method, url string, headers map[string]string) (*http.Response, error) {
+func (w *Weverse) weverseAPICall(method, target_path string, queryParams map[string]string, headers map[string]string) (*http.Response, error) {
+	url, err := generateWeverseURL(target_path, queryParams)
+	if err != nil {
+		return nil, fmt.Errorf("error generating HMAC: %v", err)
+	}
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
@@ -18,7 +22,7 @@ func weverseAPICall(client *http.Client, method, url string, headers map[string]
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-	resp, err := client.Do(req)
+	resp, err := w.Client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %v", err)
 	}
@@ -36,11 +40,7 @@ func (w *Weverse) Home() (*HomeResponse, error) {
 	queryParams := map[string]string{
 		"wpf":"pc",
 	}
-	url, err := generateWeverseURL(target_path, queryParams)
-	if err != nil {
-		return nil, fmt.Errorf("error generating HMAC: %v", err)
-	}
-	resp, err := weverseAPICall(w.Client, http.MethodGet, url, nil)
+	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error making API call: %v", err)
 	}
@@ -69,11 +69,7 @@ func (w *Weverse) GetDMRecommendations() ([]Community, error) {
 	queryParams := map[string]string{
 		"wpf":"pc",
 	}
-	url, err := generateWeverseURL(target_path, queryParams)
-	if err != nil {
-		return nil, fmt.Errorf("error generating HMAC: %v", err)
-	}
-	resp, err := weverseAPICall(w.Client, http.MethodGet, url, nil)
+	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error making API call: %v", err)
 	}
