@@ -226,73 +226,87 @@ func TestWeverseAPI(t *testing.T) {
 	}
 	t.Log("Recommendations API calls success")
 	
-	// Test Search
-	query := "NewJeans"
-	res, err := w.SearchCommunity(query, 10, 1)
-	if err != nil {
-		t.Errorf("error searching community: %v", err)
-		return
+	// Table driven tests for community API
+	queries := []string {
+		"NewJeans",
+		"ENHYPEN",
+		"TXT",
+		"SEVENTEEN",
+		"LE SSERAFIM",
+		"BABYMONSTER",
+		"BTS",
+		"Hearts2Hearts",
 	}
-	urlPath := res.Data[0].UrlPath
-	t.Log("Search Community success")
+	for _, query := range queries {
+		t.Run("SearchCommunity_"+query, func(t *testing.T) {
+			// Test Search
+			res, err := w.SearchCommunity(query, 10, 1)
+			if err != nil {
+				t.Errorf("error searching community: %v", err)
+				return
+			}
+			urlPath := res.Data[0].UrlPath
+			t.Log("Search Community success")
 
-	// Test Get Community by URL Path
-	communityId, err := w.GetCommunityByUrlPath(urlPath)
-	if err != nil {
-		t.Errorf("error getting community by URL path: %v", err)
-		return
-	}
-	if communityId != res.Data[0].CommunityID {
-		t.Errorf("Expected community ID %d, got %d", res.Data[0].CommunityID, communityId)
-		return
-	}
-	t.Log("Get Community by URL Path success")
+			// Test Get Community by URL Path
+			communityId, err := w.GetCommunityByUrlPath(urlPath)
+			if err != nil {
+				t.Errorf("error getting community by URL path: %v", err)
+				return
+			}
+			if communityId != res.Data[0].CommunityID {
+				t.Errorf("Expected community ID %d, got %d", res.Data[0].CommunityID, communityId)
+				return
+			}
+			t.Log("Get Community by URL Path success")
 
-	// Test Get Community by ID
-	communityInfo, err := w.GetCommunityById(communityId)
-	if err != nil {
-		t.Errorf("error getting community info: %v", err)
-		return
-	}
-	if communityInfo.CommunityID != communityId {
-		t.Errorf("Expected community ID %d, got %d", communityId, communityInfo.CommunityID)
-		return
-	}
-	t.Log("Get Community Info success")
+			// Test Get Community by ID
+			communityInfo, err := w.GetCommunityById(communityId)
+			if err != nil {
+				t.Errorf("error getting community info: %v", err)
+				return
+			}
+			if communityInfo.CommunityID != communityId {
+				t.Errorf("Expected community ID %d, got %d", communityId, communityInfo.CommunityID)
+				return
+			}
+			t.Log("Get Community Info success")
 
-	// Test Get Community User Info
-	communityUserInfo, err := w.GetCommunityUserInfo(communityId)
-	if err != nil {
-		t.Errorf("error getting community user info: %v", err)
-		return
-	}
-	if communityUserInfo.CommunityId != communityId {
-		t.Errorf("Expected community ID %d, got %d", communityId, communityUserInfo.CommunityId)
-		return
-	}
-	t.Log("Get Community User Info success")
+			// Test Get Community User Info
+			communityUserInfo, err := w.GetCommunityUserInfo(communityId)
+			if err != nil {
+				t.Errorf("error getting community user info: %v", err)
+				return
+			}
+			if communityUserInfo.CommunityId != communityId {
+				t.Errorf("Expected community ID %d, got %d", communityId, communityUserInfo.CommunityId)
+				return
+			}
+			t.Log("Get Community User Info success")
 
-	// Test Get Community Artists
-	artists, err := w.GetCommunityArtists(communityId)
-	if err != nil {
-		t.Errorf("error getting community artists: %v", err)
-		return
-	}
-	if len(artists) == 0 {
-		t.Error("Expected at least one artist, got none")
-		return
-	}
-	t.Log("Get Community Artists success")
+			// Test Get Community Artists
+			artists, err := w.GetCommunityArtists(communityId)
+			if err != nil {
+				t.Errorf("error getting community artists: %v", err)
+				return
+			}
+			if len(artists) == 0 {
+				t.Error("Expected at least one artist, got none")
+				return
+			}
+			t.Log("Get Community Artists success")
 
-	// Test Get Community Notices
-	notices, err := w.GetCommunityNotices(communityId, 10, 1)
-	if err != nil {
-		t.Errorf("error getting community notices: %v", err)
-		return
+			// Test Get Community Notices
+			notices, err := w.GetCommunityNotices(communityId, 10, 1)
+			if err != nil {
+				t.Errorf("error getting community notices: %v", err)
+				return
+			}
+			if len(notices.Data) == 0 {
+				t.Error("Expected at least one notice, got none")
+				return
+			}
+			t.Log("Get Community Notices success")
+		})
 	}
-	if len(notices.Data) == 0 {
-		t.Error("Expected at least one notice, got none")
-		return
-	}
-	t.Log("Get Community Notices success")
 }
