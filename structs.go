@@ -193,3 +193,20 @@ type CommunityArtistInfo struct {
 		} `json:"birthday"`
 	} `json:"artistOfficialProfile"`
 }
+
+type CommunityNotice struct {
+	ParentId string `json:"parentId"`
+	Pinned bool `json:"pinned"`
+	Body string `json:"body"`
+	Title string `json:"title"`
+	NoticeType string `json:"noticeType"`
+	MembershipOnly bool `json:"membershipOnly"`
+	PublishAt int64 `json:"publishAt"`
+	HideFromArtist bool `json:"hideFromArtist"`
+	Published bool `json:"published"`
+	ExposedStatus string `json:"exposedStatus"`
+	NoticeId int `json:"noticeId"`
+	Exposed bool `json:"exposed"`
+	ShareUrl string `json:"shareUrl"`
+	AppUrl string `json:"appUrl"`
+}

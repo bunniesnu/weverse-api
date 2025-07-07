@@ -228,12 +228,12 @@ func TestWeverseAPI(t *testing.T) {
 	
 	// Test Search
 	query := "NewJeans"
-	res, err := w.SearchCommunity(query)
+	res, err := w.SearchCommunity(query, 10, 1)
 	if err != nil {
 		t.Errorf("error searching community: %v", err)
 		return
 	}
-	urlPath := res[0].UrlPath
+	urlPath := res.Data[0].UrlPath
 	t.Log("Search Community success")
 
 	// Test Get Community by URL Path
@@ -242,8 +242,8 @@ func TestWeverseAPI(t *testing.T) {
 		t.Errorf("error getting community by URL path: %v", err)
 		return
 	}
-	if communityId != res[0].CommunityID {
-		t.Errorf("Expected community ID %d, got %d", res[0].CommunityID, communityId)
+	if communityId != res.Data[0].CommunityID {
+		t.Errorf("Expected community ID %d, got %d", res.Data[0].CommunityID, communityId)
 		return
 	}
 	t.Log("Get Community by URL Path success")
@@ -283,4 +283,16 @@ func TestWeverseAPI(t *testing.T) {
 		return
 	}
 	t.Log("Get Community Artists success")
+
+	// Test Get Community Notices
+	notices, err := w.GetCommunityNotices(communityId, 10, 1)
+	if err != nil {
+		t.Errorf("error getting community notices: %v", err)
+		return
+	}
+	if len(notices.Data) == 0 {
+		t.Error("Expected at least one notice, got none")
+		return
+	}
+	t.Log("Get Community Notices success")
 }

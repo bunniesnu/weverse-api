@@ -5,12 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func (w *Weverse) SearchCommunity(keyword string) ([]Community, error) {
+func (w *Weverse) SearchCommunity(keyword string, limit, pageNo int) (*PageResult[Community], error) {
 	target_path := "/community/v1.0/search"
 	queryParams := map[string]string{
 		"fields": "communityId,communityName,communityAlias,urlPath,logoImage,homeHeaderImage,memberCount,lastArtistContentPublishedAt,recommended",
+		"limit": strconv.Itoa(limit),
+		"pageNo": strconv.Itoa(pageNo),
+		"pagingType": "PAGE_NO",
 		"appId": WeverseWebAppId,
 		"keyword": keyword,
 		"wpf": "pc",
@@ -36,7 +40,7 @@ func (w *Weverse) SearchCommunity(keyword string) ([]Community, error) {
 	if err := json.NewDecoder(reader).Decode(data); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
-	return data.Data, nil
+	return data, nil
 }
 
 func (w *Weverse) GetCommunityByUrlPath(urlPath string) (int, error) {
@@ -103,6 +107,40 @@ func (w *Weverse) GetCommunityById(communityId int) (*CommunityDetail, error) {
 	}
 	data := new(CommunityDetail)
 	if err := json.NewDecoder(reader).Decode(&data); err != nil {
+		return nil, fmt.Errorf("error decoding response: %v", err)
+	}
+	return data, nil
+}
+
+func (w *Weverse) GetCommunityNotices(communityId, pageNo, limit int) (*PageResult[CommunityNotice], error) {
+	target_path := fmt.Sprintf("/notice/v1.0/community-%d/notices", communityId)
+	queryParams := map[string]string{
+		"fieldSet": "noticesV1",
+		"limit": strconv.Itoa(limit),
+		"pageNo": strconv.Itoa(pageNo),
+		"pagingType": "PAGE_NO",
+		"appId": WeverseWebAppId,
+		"wpf": "pc",
+	}
+	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error making API call: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+	var reader = resp.Body
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		gzipReader, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error creating gzip reader: %v", err)
+		}
+		defer gzipReader.Close()
+		reader = gzipReader
+	}
+	data := new(PageResult[CommunityNotice])
+	if err := json.NewDecoder(reader).Decode(data); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
 	return data, nil
