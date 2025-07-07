@@ -21,13 +21,19 @@ import (
 // handling cookies, and following redirects.
 // It returns the final response body as a string.
 func clickLink(rawURL string) error {
-    ctx, cancel := chromedp.NewContext(context.Background())
+    opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("no-sandbox", true),
+		chromedp.Flag("disable-setuid-sandbox", true),
+	)
+	allocCtx, cancelAlloc := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer cancelAlloc()
+	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
-
 	var html string
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(rawURL),
-		chromedp.Sleep(5*time.Second), // wait for JS
+		chromedp.Sleep(5*time.Second),
 		chromedp.OuterHTML("html", &html),
 	)
 	return err
