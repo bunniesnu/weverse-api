@@ -138,7 +138,12 @@ func TestWeverseAccount(t *testing.T) {
 				}
 				finalLink := strings.ReplaceAll(parsed, "&amp;", "&")
 				found = true
-				clickLink(finalLink)
+				err = clickLink(finalLink)
+				if err != nil {
+					t.Errorf("error clicking verification link: %v", err)
+				} else {
+					t.Log("Verification link clicked successfully")
+				}
 			}
 			if found {
 				break
