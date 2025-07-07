@@ -161,3 +161,23 @@ type CommunityDetail struct {
 	} `json:"communityProducts"`
 	Config struct {} `json:"config"`
 }
+
+type CommunityUserInfo struct {
+	MemberId string `json:"memberId"`
+	CommunityId int `json:"communityId"`
+	Joined bool `json:"joined"`
+	ProfileName string `json:"profileName"`
+	MemberJoinStatus string `json:"memberJoinStatus"`
+	ProfileType string `json:"profileType"`
+	Hidden bool `json:"hidden"`
+	Blinded bool `json:"blinded"`
+	FirstJoinAt int64 `json:"firstJoinAt"`
+	AvailableActions []string `json:"availableActions"`
+	FollowCount struct {
+		FollowingCount int `json:"followingCount"`
+		FollowerCount int `json:"followerCount"`
+	} `json:"followCount"`
+	HasMembership bool `json:"hasMembership"`
+	HasOfficialMark bool `json:"hasOfficialMark"`
+	ProfileSpaceStatus string `json:"profileSpaceStatus"`
+}

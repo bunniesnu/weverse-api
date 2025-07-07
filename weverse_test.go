@@ -256,7 +256,19 @@ func TestWeverseAPI(t *testing.T) {
 	}
 	if communityInfo.CommunityID != communityId {
 		t.Errorf("Expected community ID %d, got %d", communityId, communityInfo.CommunityID)
-	} else {
-		t.Log("Get Community Info success")
+		return
 	}
+	t.Log("Get Community Info success")
+
+	// Test Get Community User Info
+	communityUserInfo, err := w.GetCommunityUserInfo(communityId)
+	if err != nil {
+		t.Errorf("error getting community user info: %v", err)
+		return
+	}
+	if communityUserInfo.CommunityId != communityId {
+		t.Errorf("Expected community ID %d, got %d", communityId, communityUserInfo.CommunityId)
+		return
+	}
+	t.Log("Get Community User Info success")
 }
