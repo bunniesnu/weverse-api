@@ -46,3 +46,29 @@ var SDKDefaultHeaders = map[string]string{
 	"Cache-Control": "no-cache",
 	"X-SDK-SERVICE-SECRET": "9d79660be5ca452ab8c93bcaee310bb7",
 }
+
+var WeverseDefaultHeaders = map[string]string{
+	"Host": "weverse.io",
+	"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0",
+	"Accept": "application/json, text/plain, */*",
+	"Accept-Language": "en-US,en;q=0.7,ko-KR;q=0.3",
+	"Accept-Encoding": "gzip, deflate, br, zstd",
+	"WEV-device-Id": "1",
+	"WEV-wdm-v2": "off",
+	"WEV-open-community": "A",
+	"WEV-timezone-id": "Asia/Seoul",
+	"Origin": "https://weverse.io",
+	"DNT": "1",
+	"Sec-GPC": "1",
+	"Connection": "keep-alive",
+	"Referer": "https://weverse.io/",
+	"Sec-Fetch-Dest": "empty",
+	"Sec-Fetch-Mode": "cors",
+	"Sec-Fetch-Site": "cross-site",
+	"Pragma": "no-cache",
+	"Cache-Control": "no-cache",
+	"TE": "trailers",
+}
+
+const HMACKey = "1b9cb6378d959b45714bec49971ade22e6e24e42"
+const weverseBaseURL = "https://global.apis.naver.com/weverse/wevweb"

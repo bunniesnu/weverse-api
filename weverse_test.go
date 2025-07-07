@@ -2,7 +2,6 @@ package weverse
 
 import (
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -59,7 +58,7 @@ func generatePassword(length int) string {
 	return string(password)
 }
 
-func TestWeverse(t *testing.T) {
+func TestWeverseAccount(t *testing.T) {
 	proxyURL := "" // Set your proxy URL if needed, otherwise leave empty
 	timeout := 30 * time.Second
 
@@ -200,5 +199,22 @@ func TestWeverse(t *testing.T) {
 	} else {
 		t.Log("Session save/load success")
 	}
-	os.Remove(saveSessionPath)
+}
+
+func TestWeverseAPI(t *testing.T) {
+	w, err := New("", "", "", 0)
+	if err != nil {
+		t.Errorf("error creating Weverse client: %v", err)
+		return
+	}
+	err = w.LoadSession("session.json", "", 0)
+	if err != nil {
+		t.Errorf("error loading session: %v", err)
+		return
+	}
+	_, err = w.Home()
+	if err != nil {
+		t.Errorf("error getting home data: %v", err)
+		return
+	}
 }

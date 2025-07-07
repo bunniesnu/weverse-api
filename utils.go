@@ -2,8 +2,14 @@ package weverse
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/base64"
 	"net"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/chromedp/chromedp"
@@ -45,4 +51,27 @@ func MakeProxyClient(proxyURL string, timeout time.Duration) (*http.Client, erro
 		}
 	}
 	return client, nil
+}
+
+func generateWeverseURL(targetPath string, queryParams map[string]string) (string, error) {
+	if !strings.HasSuffix(targetPath, "?") {
+		targetPath += "?"
+	}
+	wmsgpad := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+	values := url.Values{}
+	for k, v := range queryParams {
+		values.Set(k, v)
+	}
+	apiPath := targetPath + values.Encode()
+	if len(apiPath) > 255 {
+		apiPath = apiPath[:255]
+	}
+	mac := hmac.New(sha1.New, []byte(HMACKey))
+	mac.Write([]byte(apiPath + wmsgpad))
+	signature := mac.Sum(nil)
+	wmd := base64.StdEncoding.EncodeToString(signature)
+	values.Set("wmsgpad", wmsgpad)
+	values.Set("wmd", wmd)
+	finalUrl := weverseBaseURL + targetPath + values.Encode()
+	return finalUrl, nil
 }
