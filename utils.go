@@ -73,6 +73,6 @@ func generateWeverseURL(targetPath string, queryParams map[string]string) (strin
 	wmd := base64.StdEncoding.EncodeToString(signature)
 	finalQuery := encodedParams + "&wmsgpad=" + url.QueryEscape(wmsgpad) + "&wmd=" + url.QueryEscape(wmd)
 	finalQuery = strings.TrimPrefix(finalQuery, "&")
-	finalURL := weverseBaseURL + targetPath + finalQuery
+	finalURL := WeverseBaseURL + targetPath + finalQuery
 	return finalURL, nil
 }

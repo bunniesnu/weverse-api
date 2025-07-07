@@ -225,4 +225,12 @@ func TestWeverseAPI(t *testing.T) {
 		return
 	}
 	t.Log("Recommendations API calls success")
+	
+	// Test Search
+	query := "NewJeans"
+	_, err = w.SearchCommunity(query)
+	if err != nil {
+		t.Errorf("error searching community: %v", err)
+		return
+	}
 }

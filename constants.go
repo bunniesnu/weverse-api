@@ -71,4 +71,5 @@ var WeverseDefaultHeaders = map[string]string{
 }
 
 const HMACKey = "1b9cb6378d959b45714bec49971ade22e6e24e42"
-const weverseBaseURL = "https://global.apis.naver.com/weverse/wevweb"
+const WeverseBaseURL = "https://global.apis.naver.com/weverse/wevweb"
+const WeverseWebAppId = "be4d79eb8fc7bd008ee82c8ec4ff6fd4"

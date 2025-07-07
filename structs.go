@@ -71,3 +71,13 @@ type Ad struct {
 	Width int `json:"width"`
 	Height int `json:"height"`
 }
+
+type PageResult[T any] struct {
+	Paging struct {
+		PageNo    int `json:"pageNo"`
+		MaxPageNo int `json:"maxPageNo"`
+		Limit     int `json:"limit"`
+	} `json:"paging"`
+	Data []T `json:"data"`
+	TotalCount int `json:"totalCount"`
+}
