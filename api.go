@@ -34,10 +34,6 @@ type HomeResponse struct {
 func (w *Weverse) Home() (*HomeResponse, error) {
 	target_path := "/home/v1.0/home/pc"
 	queryParams := map[string]string{
-		"appId": "be4d79eb8fc7bd008ee82c8ec4ff6fd4",
-		"language":"en",
-		"os":"WEB",
-		"platform":"WEB",
 		"wpf":"pc",
 	}
 	url, err := generateWeverseURL(target_path, queryParams)

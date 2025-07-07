@@ -62,7 +62,8 @@ func generateWeverseURL(targetPath string, queryParams map[string]string) (strin
 	for k, v := range queryParams {
 		values.Set(k, v)
 	}
-	apiPath := targetPath + values.Encode()
+	encodedParams := values.Encode()
+	apiPath := targetPath + encodedParams
 	if len(apiPath) > 255 {
 		apiPath = apiPath[:255]
 	}
@@ -70,8 +71,8 @@ func generateWeverseURL(targetPath string, queryParams map[string]string) (strin
 	mac.Write([]byte(apiPath + wmsgpad))
 	signature := mac.Sum(nil)
 	wmd := base64.StdEncoding.EncodeToString(signature)
-	values.Set("wmsgpad", wmsgpad)
-	values.Set("wmd", wmd)
-	finalUrl := weverseBaseURL + targetPath + values.Encode()
-	return finalUrl, nil
+	finalQuery := encodedParams + "&wmsgpad=" + url.QueryEscape(wmsgpad) + "&wmd=" + url.QueryEscape(wmd)
+	finalQuery = strings.TrimPrefix(finalQuery, "&")
+	finalURL := weverseBaseURL + targetPath + finalQuery
+	return finalURL, nil
 }
