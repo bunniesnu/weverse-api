@@ -228,9 +228,23 @@ func TestWeverseAPI(t *testing.T) {
 	
 	// Test Search
 	query := "NewJeans"
-	_, err = w.SearchCommunity(query)
+	res, err := w.SearchCommunity(query)
 	if err != nil {
 		t.Errorf("error searching community: %v", err)
 		return
 	}
+	urlPath := res[0].UrlPath
+	t.Log("Search Community success")
+
+	// Test Get Community by URL Path
+	communityId, err := w.GetCommunityByUrlPath(urlPath)
+	if err != nil {
+		t.Errorf("error getting community by URL path: %v", err)
+		return
+	}
+	if communityId != res[0].CommunityID {
+		t.Errorf("Expected community ID %d, got %d", res[0].CommunityID, communityId)
+		return
+	}
+	t.Log("Get Community by URL Path success")
 }
