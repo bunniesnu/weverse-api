@@ -13,7 +13,7 @@ func (w *Weverse) SearchCommunity(keyword string) ([]Community, error) {
 		"fields": "communityId,communityName,communityAlias,urlPath,logoImage,homeHeaderImage,memberCount,lastArtistContentPublishedAt,recommended",
 		"appId": WeverseWebAppId,
 		"keyword": keyword,
-		"wpf":     "pc",
+		"wpf": "pc",
 	}
 	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
 	if err != nil {

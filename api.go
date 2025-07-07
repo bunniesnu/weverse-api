@@ -14,6 +14,7 @@ func (w *Weverse) weverseAPICall(method, target_path string, queryParams map[str
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
+	req.Header.Set("Authorization", "Bearer "+w.AccessToken)
 	for key, value := range WeverseDefaultHeaders {
 		req.Header.Set(key, value)
 	}
