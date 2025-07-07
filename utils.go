@@ -25,11 +25,15 @@ func clickLink(rawURL string) error {
 		chromedp.Flag("headless", true),
 		chromedp.Flag("no-sandbox", true),
 		chromedp.Flag("disable-setuid-sandbox", true),
+        chromedp.Flag("disable-gpu", true),
+        chromedp.Flag("disable-dev-shm-usage", true),
 	)
 	allocCtx, cancelAlloc := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancelAlloc()
 	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
+	ctx, cancelTimeout := context.WithTimeout(ctx, 60*time.Second)
+	defer cancelTimeout()
 	var html string
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(rawURL),
