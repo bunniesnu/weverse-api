@@ -81,3 +81,83 @@ type PageResult[T any] struct {
 	Data []T `json:"data"`
 	TotalCount int `json:"totalCount"`
 }
+
+type CommunityDetail struct {
+	CommunityID int `json:"communityId"`
+	CommunityName string `json:"communityName"`
+	UrlPath string `json:"urlPath"`
+	AgencyProfile struct {
+		ProfileImageUrl string `json:"profileImageUrl"`
+		ProfileName string `json:"profileName"`
+		ProfileCoverImageUrl string `json:"profileCoverImageUrl"`
+	} `json:"agencyProfile"`
+	LogoImage string `json:"logoImage"`
+	HomeHeaderImage string `json:"homeHeaderImage"`
+	ArtistCode string `json:"artistCode"`
+	FanEventUrl string `json:"fanEventUrl"`
+	HomeGradationColor struct {
+		UpLeftColorCode string `json:"upLeftColorCode"`
+		UpRightColorCode string `json:"upRightColorCode"`
+		DownLeftColorCode string `json:"downLeftColorCode"`
+		DownRightColorCode string `json:"downRightColorCode"`
+	} `json:"homeGradationColor"`
+	GradationColor struct {
+		MainLeftColorCode string `json:"mainLeftColorCode"`
+		MainRightColorCode string `json:"mainRightColorCode"`
+		SubLeftColorCode string `json:"subLeftColorCode"`
+		SubRightColorCode string `json:"subRightColorCode"`
+	} `json:"gradationColor"`
+	CommunityColor string `json:"communityColor"`
+	HasMembershipProduct bool `json:"hasMembershipProduct"`
+	MemberCountString string `json:"memberCountString"`
+	AvailableActions []string `json:"availableActions"`
+	BirthdayArtists []struct {
+		Name string `json:"name"`
+		Birthday string `json:"birthday"`
+	} `json:"birthdayArtists"`
+	HasOnAirLivePost bool `json:"hasOnAirLivePost"`
+	HasOnAirPartyPost bool `json:"hasOnAirPartyPost"`
+	Membership struct {
+		IsOnSale bool `json:"isOnSale"`
+		IsActivated bool `json:"isActivated"`
+		Data []struct {
+			Type string `json:"type"`
+			IsPurchased bool `json:"isPurchased"`
+			AdditionalInfo struct {
+				ArtistCode string `json:"artistCode"`
+			} `json:"additionalInfo"`
+		} `json:"data"`
+	} `json:"membership"`
+	ShopUrl string `json:"shopUrl"`
+	Tabs []struct {
+		TabKey string `json:"tabKey"`
+		ChildTabs []struct {
+			TabKey string `json:"tabKey"`
+		} `json:"childTabs,omitempty"`
+		Data struct {
+			LastStickerUpdatedAt int `json:"lastStickerUpdatedAt"`
+			LastUpdatedAt int64 `json:"lastUpdatedAt"`
+		} `json:"data,omitempty"`
+	} `json:"tabs"`
+	CommunityProducts struct {
+		MEMBERSHIP struct {
+			Enabled bool `json:"enabled"`
+			Data struct {
+				IsOnSale bool `json:"isOnSale"`
+				IsActivated bool `json:"isActivated"`
+			} `json:"data"`
+		} `json:"MEMBERSHIP"`
+		WDM struct {
+			Enabled bool `json:"enabled"`
+		} `json:"WDM"`
+		FAN_LETTER struct {
+			Enabled bool `json:"enabled"`
+			Data struct {
+				Enable bool `json:"enable"`
+				LastUpdatedAt int64 `json:"lastUpdatedAt"`
+				LastStickerUpdatedAt int `json:"lastStickerUpdatedAt"`
+			} `json:"data"`
+		} `json:"FAN_LETTER"`
+	} `json:"communityProducts"`
+	Config struct {} `json:"config"`
+}

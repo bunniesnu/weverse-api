@@ -247,4 +247,16 @@ func TestWeverseAPI(t *testing.T) {
 		return
 	}
 	t.Log("Get Community by URL Path success")
+
+	// Test Get Community by ID
+	communityInfo, err := w.GetCommunityById(communityId)
+	if err != nil {
+		t.Errorf("error getting community info: %v", err)
+		return
+	}
+	if communityInfo.CommunityID != communityId {
+		t.Errorf("Expected community ID %d, got %d", communityId, communityInfo.CommunityID)
+	} else {
+		t.Log("Get Community Info success")
+	}
 }

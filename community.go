@@ -75,3 +75,35 @@ func (w *Weverse) GetCommunityByUrlPath(urlPath string) (int, error) {
 	}
 	return data.CommunityId, nil
 }
+
+func (w *Weverse) GetCommunityById(communityId int) (*CommunityDetail, error) {
+	target_path := fmt.Sprintf("/community/v1.0/community-%d", communityId)
+	queryParams := map[string]string{
+		"appId": WeverseWebAppId,
+		"fieldSet": "communityHomeV1_1",
+		"fields": "shopUrl,tabs,membership",
+		"wpf": "pc",
+	}
+	resp, err := w.weverseAPICall(http.MethodGet, target_path, queryParams, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error making API call: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+	var reader = resp.Body
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		gzipReader, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error creating gzip reader: %v", err)
+		}
+		defer gzipReader.Close()
+		reader = gzipReader
+	}
+	data := new(CommunityDetail)
+	if err := json.NewDecoder(reader).Decode(&data); err != nil {
+		return nil, fmt.Errorf("error decoding response: %v", err)
+	}
+	return data, nil
+}
