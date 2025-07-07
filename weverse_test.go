@@ -271,4 +271,16 @@ func TestWeverseAPI(t *testing.T) {
 		return
 	}
 	t.Log("Get Community User Info success")
+
+	// Test Get Community Artists
+	artists, err := w.GetCommunityArtists(communityId)
+	if err != nil {
+		t.Errorf("error getting community artists: %v", err)
+		return
+	}
+	if len(artists) == 0 {
+		t.Error("Expected at least one artist, got none")
+		return
+	}
+	t.Log("Get Community Artists success")
 }

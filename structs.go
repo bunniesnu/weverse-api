@@ -181,3 +181,15 @@ type CommunityUserInfo struct {
 	HasOfficialMark bool `json:"hasOfficialMark"`
 	ProfileSpaceStatus string `json:"profileSpaceStatus"`
 }
+
+type CommunityArtistInfo struct {
+	MemberId string `json:"memberId"`
+	ArtistOfficialProfile struct {
+		OfficialImageUrl string `json:"officialImageUrl"`
+		OfficialName string `json:"officialName"`
+		Birthday struct {
+			DateString string `json:"dateString"`
+			Bday bool `json:"bday"`
+		} `json:"birthday"`
+	} `json:"artistOfficialProfile"`
+}
