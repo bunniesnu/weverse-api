@@ -1,0 +1,23 @@
+name: test
+
+on:
+  push:
+    tags:
+      - 'v*'              # trigger on version tags
+  schedule:
+    - cron: '0 12 * * *'  # every day at 12:00 UTC
+  workflow_dispatch:      # optional: allows manual trigger
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24.4'
+
+    - name: Run Tests
+      run: go test -v ./...
