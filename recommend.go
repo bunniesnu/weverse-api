@@ -9,7 +9,7 @@ import (
 
 type HomeResponse struct {
 	MainBanners    []Banner     `json:"mainBanners"`
-	FeaturedArtist []Community  `json:"featuredArtist"`
+	FeaturedArtist []CommunityRecommend  `json:"featuredArtist"`
 	Ads            []Ad         `json:"ads"`
 }
 
@@ -42,7 +42,7 @@ func (w *Weverse) Home() (*HomeResponse, error) {
 	return homeResponse, nil
 }
 
-func (w *Weverse) GetDMRecommendations() ([]Community, error) {
+func (w *Weverse) GetDMRecommendations() ([]CommunityRecommend, error) {
 	target_path := "/dm/v1.0/dm/recommend-communities"
 	queryParams := map[string]string{
 		"wpf":"pc",
@@ -64,7 +64,7 @@ func (w *Weverse) GetDMRecommendations() ([]Community, error) {
 		defer gzipReader.Close()
 		reader = gzipReader
 	}
-	var recommendations []Community
+	var recommendations []CommunityRecommend
 	if err := json.NewDecoder(reader).Decode(&recommendations); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}

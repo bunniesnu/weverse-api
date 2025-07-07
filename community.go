@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (w *Weverse) SearchCommunity(keyword string, limit, pageNo int) (*PageResult[Community], error) {
+func (w *Weverse) SearchCommunity(keyword string, limit, pageNo int) (*PageResult[CommunityRecommend], error) {
 	target_path := "/community/v1.0/search"
 	queryParams := map[string]string{
 		"fields": "communityId,communityName,communityAlias,urlPath,logoImage,homeHeaderImage,memberCount,lastArtistContentPublishedAt,recommended",
@@ -36,7 +36,7 @@ func (w *Weverse) SearchCommunity(keyword string, limit, pageNo int) (*PageResul
 		defer gzipReader.Close()
 		reader = gzipReader
 	}
-	data := new(PageResult[Community])
+	data := new(PageResult[CommunityRecommend])
 	if err := json.NewDecoder(reader).Decode(data); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
@@ -80,7 +80,7 @@ func (w *Weverse) GetCommunityByUrlPath(urlPath string) (int, error) {
 	return data.CommunityId, nil
 }
 
-func (w *Weverse) GetCommunityById(communityId int) (*CommunityDetail, error) {
+func (w *Weverse) GetCommunityById(communityId int) (*Community, error) {
 	target_path := fmt.Sprintf("/community/v1.0/community-%d", communityId)
 	queryParams := map[string]string{
 		"appId": WeverseWebAppId,
@@ -105,7 +105,7 @@ func (w *Weverse) GetCommunityById(communityId int) (*CommunityDetail, error) {
 		defer gzipReader.Close()
 		reader = gzipReader
 	}
-	data := new(CommunityDetail)
+	data := new(Community)
 	if err := json.NewDecoder(reader).Decode(&data); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}

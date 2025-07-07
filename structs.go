@@ -50,7 +50,7 @@ type Banner struct {
 	CommunityName string `json:"communityName"`
 }
 
-type Community struct {
+type CommunityRecommend struct {
 	CommunityID int `json:"communityId"`
 	CommunityName string `json:"communityName"`
 	CommunityAlias string `json:"communityAlias"`
@@ -82,7 +82,7 @@ type PageResult[T any] struct {
 	TotalCount int `json:"totalCount"`
 }
 
-type CommunityDetail struct {
+type Community struct {
 	CommunityID int `json:"communityId"`
 	CommunityName string `json:"communityName"`
 	UrlPath string `json:"urlPath"`
