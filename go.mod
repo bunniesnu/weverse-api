@@ -3,7 +3,7 @@ module github.com/bunniesnu/weverse-api
 go 1.24.4
 
 require (
-	github.com/bunniesnu/go-gmailnator v1.0.0
+	github.com/bunniesnu/go-gmailnator v1.0.1
 	github.com/chromedp/chromedp v0.13.7
 	golang.org/x/net v0.41.0
 )
